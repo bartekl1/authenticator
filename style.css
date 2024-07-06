@@ -45,3 +45,9 @@ html, body,
     bottom: 15px;
     right: 15px;
 }
+
+.account-copy-totp {
+    position: absolute;
+    bottom: 10px;
+    left: 120px;
+}

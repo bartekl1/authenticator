@@ -23,6 +23,7 @@ function setAccounts(accounts) {
         accountElement.querySelector(".account-username").innerText = account.username;
         accountElement.querySelector(".account-totp").innerText = account.totp;
         accountElement.querySelector(".account-totp-expires").style.setProperty("--expires", ((30 - account.expires) / 30 * 100).toString() + "%");
+        accountElement.querySelector(".account-copy-totp").addEventListener("click", copyOTP);
         document.querySelector("#accounts").append(accountElement);
     });
     if (document.querySelector("#accounts").lastChild !== null) document.querySelector("#accounts").lastChild.classList.add("last-account");
@@ -36,6 +37,16 @@ function updateOTPs(accounts) {
         accountElement.querySelector(".account-totp").innerText = account.totp;
         accountElement.querySelector(".account-totp-expires").style.setProperty("--expires", ((30 - account.expires) / 30 * 100).toString() + "%");
     });
+}
+
+function copyOTP(evt) {
+    var element = evt.currentTarget;
+    while (!element.classList.contains("account")) element = element.parentElement;
+    var totp = element.querySelector(".account-totp").innerText;
+    totp = totp.replace(/\s/g, '');
+    navigator.clipboard.writeText(totp);
+    evt.currentTarget.innerHTML = '<i class="bi bi-clipboard-check"></i>';
+    setTimeout((el) => { el.innerHTML = '<i class="bi bi-clipboard"></i>'; }, 2000, evt.currentTarget);
 }
 
 worker.addEventListener("message", (e) => {
