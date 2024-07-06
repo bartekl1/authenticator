@@ -1,8 +1,10 @@
 const commandExistsSync = require("command-exists").sync;
 const { execSync } = require("child_process");
 const shell = require("electron").shell;
+const { TOTP } = require("totp-generator");
 
 var sessionToken;
+var vault;
 
 function getVault(args) {
     if (!commandExistsSync("bw")) return { status: "error", error: "bw_cli_not_installed" };
@@ -47,15 +49,31 @@ function getVault(args) {
     if (result.success) {
         var items = [];
         result.data.data.forEach((item) => {
-            if (item.type === 1 && item.login.totp !== null) items.push({
-                id: item.id,
-                name: item.name,
-                username: item.login.username,
-                totpSecret: item.login.totp
-            });
+            if (item.type === 1 && item.login.totp !== null) {
+                const { otp, expires } = TOTP.generate(item.login.totp);
+                items.push({
+                    id: item.id,
+                    name: item.name,
+                    username: item.login.username,
+                    totpSecret: item.login.totp,
+                    totp: otp.substring(0, 3) + " " + otp.substring(3),
+                    expires: (expires - Date.now()) / 1000,
+                });
+            }
         });
+        vault = items;
+        setInterval(updateOTPs, 500);
         return { status: "ok", vault: items };
     }
+}
+
+function updateOTPs() {
+    for (var i = 0; i < vault.length; i++) {
+        const { otp, expires } = TOTP.generate(vault[i].totpSecret);
+        vault[i].totp = otp.substring(0, 3) + " " + otp.substring(3);
+        vault[i].expires = (expires - Date.now()) / 1000;
+    }
+    this.postMessage({ message: "updateOTPs", vault: vault });
 }
 
 this.addEventListener("message", (e) => {

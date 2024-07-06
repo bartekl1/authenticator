@@ -29,8 +29,19 @@ html, body,
     border-bottom-color: var(--bs-gray-700);
     padding: 5px;
     margin-bottom: 5px;
+    position: relative;
 }
 
 .last-account {
     border-bottom-style: none;
+}
+
+.account-totp-expires {
+    width: 20px;
+    height: 20px;
+    background: conic-gradient(transparent var(--expires), var(--bs-primary) 0);
+    border-radius: 50%;
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
 }

@@ -23,6 +23,7 @@
     "dependencies": {
         "bootstrap": "^5.3.3",
         "bootstrap-icons": "^1.11.3",
-        "command-exists": "^1.2.9"
+        "command-exists": "^1.2.9",
+        "totp-generator": "^1.0.0"
     }
 }

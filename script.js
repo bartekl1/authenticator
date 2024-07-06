@@ -21,12 +21,21 @@ function setAccounts(accounts) {
         accountElement.querySelector(".account-id").innerText = account.id;
         accountElement.querySelector(".account-name").innerText = account.name;
         accountElement.querySelector(".account-username").innerText = account.username;
-        accountElement.querySelector(".account-totp").innerText = "123 456";
+        accountElement.querySelector(".account-totp").innerText = account.totp;
+        accountElement.querySelector(".account-totp-expires").style.setProperty("--expires", ((30 - account.expires) / 30 * 100).toString() + "%");
         document.querySelector("#accounts").append(accountElement);
     });
-    document.querySelector("#accounts").lastChild.classList.add("last-account");
+    if (document.querySelector("#accounts").lastChild !== null) document.querySelector("#accounts").lastChild.classList.add("last-account");
     document.querySelector("#loading-div").classList.add("d-none");
     document.querySelector("#accounts").classList.remove("d-none");
+}
+
+function updateOTPs(accounts) {
+    accounts.forEach((account) => {
+        var accountElement = document.querySelector(`[account-id="${account.id}"]`);
+        accountElement.querySelector(".account-totp").innerText = account.totp;
+        accountElement.querySelector(".account-totp-expires").style.setProperty("--expires", ((30 - account.expires) / 30 * 100).toString() + "%");
+    });
 }
 
 worker.addEventListener("message", (e) => {
@@ -57,6 +66,11 @@ worker.addEventListener("message", (e) => {
             } else if (message.result.status === "ok") {
                 setAccounts(message.result.vault);
             }
+
+            break;
+        
+        case "updateOTPs":
+            updateOTPs(message.vault);
 
             break;
     
