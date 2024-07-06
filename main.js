@@ -1,13 +1,16 @@
-const { app, BrowserWindow,  ipcMain } = require("electron/main");
+const { app, BrowserWindow, Menu, shell, dialog } = require("electron/main");
 const path = require("node:path");
 const fse = require("fs-extra");
+
+const { getTranslation } = require("./translations");
+
+const package = fse.readJSONSync("package.json");
 
 function createWindow() {
     const mainWindow = new BrowserWindow({
         width: 500,
         height: 800,
         webPreferences: {
-            preload: path.join(__dirname, "preload.js"),
             nodeIntegrationInWorker: true,
         },
         icon: "./img/icon_x128.ico",
@@ -18,6 +21,44 @@ function createWindow() {
     mainWindow.setMaximumSize(562, 900);
     mainWindow.setMaximizable(false);
     mainWindow.removeMenu();
+
+    const locale = app.getLocale();
+
+    const menu = Menu.buildFromTemplate([
+        {
+            label: getTranslation(0, locale),
+            submenu: [
+                {
+                    label: getTranslation(1, locale),
+                    click: async () => {
+                        app.exit();
+                    },
+                },
+            ],
+        },
+        {
+            label: getTranslation(2, locale),
+            submenu: [
+                {
+                    label: getTranslation(4, locale),
+                    click: async () => {
+                        dialog.showMessageBox(null,  {
+                            title: "Authenticator",
+                            message: `Authenticator\nv. ${package.version}\nby @bartekl1\n${package.homepage.replace("#readme", "")}`,
+                            icon: "./img/icon_x128.ico",
+                        });
+                    },
+                },
+                {
+                    label: getTranslation(3, locale),
+                    click: async () => {
+                        shell.openExternal(package.homepage.replace("#readme", ""));
+                    },
+                },
+            ],
+        },
+    ]);
+    Menu.setApplicationMenu(menu);
 
     mainWindow.loadFile("index.html");
 
