@@ -20,7 +20,7 @@ module.exports = {
         title: "Authenticator",
         setupIcon: "img/icon_x256.ico",
         iconUrl: path.join(__dirname, "img/icon_x256.ico"),
-        // iconUrl: "https://raw.githubusercontent.com/bartekl1/authenticator/main/img/icon_x96.ico",
+        loadingGif: "img/loading.gif",
       },
     },
     {
