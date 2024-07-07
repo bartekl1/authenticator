@@ -4,6 +4,7 @@ const english = [
     "Help",
     "GitHub repository",
     "About",
+    "Lock vault",
 ];
 
 const polish = [
@@ -12,6 +13,7 @@ const polish = [
     "Pomoc",
     "Repozytorium GitHub",
     "O",
+    "Zablokuj sejf",
 ];
 
 function getTranslation(id, locale) {

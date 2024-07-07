@@ -49,6 +49,12 @@ function copyOTP(evt) {
     setTimeout((el) => { el.innerHTML = '<i class="bi bi-clipboard"></i>'; }, 2000, evt.currentTarget);
 }
 
+function vaultLocked() {
+    document.querySelector("#accounts").innerHTML = "";
+    document.querySelector("#loading-div").classList.add("d-none");
+    document.querySelector("#vault-is-locked").classList.remove("d-none");
+}
+
 worker.addEventListener("message", (e) => {
     const message = e.data;
 
@@ -84,6 +90,11 @@ worker.addEventListener("message", (e) => {
             updateOTPs(message.vault);
 
             break;
+        
+        case "vaultLocked":
+            vaultLocked();
+
+            break;
     
         default:
             break;
@@ -110,4 +121,10 @@ document.querySelectorAll(".try-again").forEach((e) => { e.addEventListener("cli
 document.querySelector("#unlock").addEventListener("click", unlock);
 document.querySelector("#password").addEventListener("keyup", (evt) => {
     if (evt.keyCode === 13) unlock();
+});
+
+window.electronAPI.onLockVault(() => {
+    document.querySelector("#accounts").classList.add("d-none");
+    document.querySelector("#loading-div").classList.remove("d-none");
+    worker.postMessage({ message: "lockVault" });
 });

@@ -5,6 +5,7 @@ const { TOTP } = require("totp-generator");
 
 var sessionToken;
 var vault;
+var interval;
 
 function getVault(args) {
     if (!commandExistsSync("bw")) return { status: "error", error: "bw_cli_not_installed" };
@@ -62,7 +63,7 @@ function getVault(args) {
             }
         });
         vault = items;
-        setInterval(updateOTPs, 500);
+        interval = setInterval(updateOTPs, 500);
         return { status: "ok", vault: items };
     }
 }
@@ -76,28 +77,42 @@ function updateOTPs() {
     this.postMessage({ message: "updateOTPs", vault: vault });
 }
 
+function lockVault() {
+    var result;
+    if (typeof sessionToken !== "undefined") {
+        result = JSON.parse(execSync("bw lock --nointeraction --response --cleanexit", { stdio : "pipe", env: { ...process.env, "BW_SESSION": sessionToken } }).toString());
+    } else {
+        result = JSON.parse(execSync("bw lock --nointeraction --response --cleanexit", { stdio : "pipe" }).toString());
+    }
+    console.log(result)
+    if (result.success) {
+        clearInterval(interval);
+        this.postMessage({ message: "vaultLocked" });
+    }
+}
+
 this.addEventListener("message", (e) => {
     const message = e.data;
 
     switch (message.message) {
         case "init":
             this.postMessage({ message: "initReturn", result: getVault() });
-
             break;
 
         case "openURL":
             shell.openExternal(message.url);
-
             break;
 
         case "logInBW":
             execSync("start cmd /c bw login");
-
             break;
 
         case "unlock":
             this.postMessage({ message: "unlockReturn", result: getVault({password: message.password}) });
-
+            break;
+        
+        case "lockVault":
+            lockVault();
             break;
     
         default:

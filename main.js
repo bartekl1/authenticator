@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, shell, dialog } = require("electron/main");
+const { app, BrowserWindow, Menu, shell, dialog, ipcMain } = require("electron/main");
 const path = require("node:path");
 const fse = require("fs-extra");
 
@@ -11,6 +11,7 @@ function createWindow() {
         width: 500,
         height: 800,
         webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
             nodeIntegrationInWorker: true,
         },
         icon: "./img/icon_x128.ico",
@@ -28,6 +29,12 @@ function createWindow() {
         {
             label: getTranslation(0, locale),
             submenu: [
+                {
+                    label: getTranslation(5, locale),
+                    click: async () => {
+                        mainWindow.webContents.send("lock-vault");
+                    },
+                },
                 {
                     label: getTranslation(1, locale),
                     click: async () => {
