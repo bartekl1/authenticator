@@ -1,10 +1,12 @@
 const { app, BrowserWindow, Menu, shell, dialog, ipcMain } = require("electron/main");
+if (require('electron-squirrel-startup')) app.quit();
 const path = require("node:path");
 const fse = require("fs-extra");
 
 const { getTranslation } = require("./translations");
 
-const package = fse.readJSONSync("package.json");
+const package = fse.readJSONSync(path.join(__dirname, "package.json"));
+
 
 function createWindow() {
     const mainWindow = new BrowserWindow({

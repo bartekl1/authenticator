@@ -84,7 +84,6 @@ function lockVault() {
     } else {
         result = JSON.parse(execSync("bw lock --nointeraction --response --cleanexit", { stdio : "pipe" }).toString());
     }
-    console.log(result)
     if (result.success) {
         clearInterval(interval);
         this.postMessage({ message: "vaultLocked" });
