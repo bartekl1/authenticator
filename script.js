@@ -1,5 +1,7 @@
 var worker = new Worker("worker.js");
 
+const QRCodeModal = new bootstrap.Modal(document.querySelector("#qr-code-modal"));
+
 function unlock() {
     var password = document.querySelector("#password").value;
     password === "" ? document.querySelector("#password").classList.add("is-invalid") : document.querySelector("#password").classList.remove("is-invalid");
@@ -22,8 +24,10 @@ function setAccounts(accounts) {
         accountElement.querySelector(".account-name").innerText = account.name;
         accountElement.querySelector(".account-username").innerText = account.username;
         accountElement.querySelector(".account-totp").innerText = account.totp;
+        accountElement.querySelector(".account-secret").innerText = account.totpSecret;
         accountElement.querySelector(".account-totp-expires").style.setProperty("--expires", ((30 - account.expires) / 30 * 100).toString() + "%");
         accountElement.querySelector(".account-copy-totp").addEventListener("click", copyOTP);
+        accountElement.querySelector(".account-qr-code").addEventListener("click", createQRCode);
         document.querySelector("#accounts").append(accountElement);
     });
     if (document.querySelector("#accounts").lastChild !== null) document.querySelector("#accounts").lastChild.classList.add("last-account");
@@ -47,6 +51,33 @@ function copyOTP(evt) {
     navigator.clipboard.writeText(totp);
     evt.currentTarget.innerHTML = '<i class="bi bi-clipboard-check"></i>';
     setTimeout((el) => { el.innerHTML = '<i class="bi bi-clipboard"></i>'; }, 2000, evt.currentTarget);
+}
+
+function createQRCode(evt) {
+    var element = evt.currentTarget;
+    while (!element.classList.contains("account")) element = element.parentElement;
+    var secret = element.querySelector(".account-secret").innerText;
+    var name = element.querySelector(".account-name").innerText;
+    var username = element.querySelector(".account-username").innerText;
+    document.querySelector("#qr-totp-secret").value = secret;
+    document.querySelector("#qr-issuer").value = name;
+    document.querySelector("#qr-username").value = username;
+    updateURI();
+    updateQRCode();
+}
+
+function updateURI() {
+    var secret = document.querySelector("#qr-totp-secret").value;
+    var name = document.querySelector("#qr-issuer").value;
+    var username = document.querySelector("#qr-username").value;
+    var uri = `otpauth://totp/${encodeURI(name)}:${encodeURI(username)}?secret=${secret}&issuer=${encodeURI(name)}`;
+    document.querySelector("#qr-otpauth-uri").value = uri;
+}
+
+function updateQRCode() {
+    var uri = document.querySelector("#qr-otpauth-uri").value;
+    QRCode.toCanvas(document.querySelector("#qr-code").querySelector("canvas"), uri);
+    QRCodeModal.show();
 }
 
 function vaultLocked() {
@@ -127,4 +158,19 @@ window.electronAPI.onLockVault(() => {
     document.querySelector("#accounts").classList.add("d-none");
     document.querySelector("#loading-div").classList.remove("d-none");
     worker.postMessage({ message: "lockVault" });
+});
+
+document.querySelectorAll(["#qr-totp-secret", "#qr-issuer", "#qr-username"]).forEach((e) => {
+    ["change", "keyup"].forEach((evtType) => {
+        e.addEventListener(evtType, () => {
+            updateURI();
+            updateQRCode();
+        });
+    });
+});
+
+["change", "keyup"].forEach((evtType) => {
+    document.querySelector("#qr-otpauth-uri").addEventListener(evtType, () => {
+        updateQRCode();
+    });
 });

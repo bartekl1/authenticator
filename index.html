@@ -92,19 +92,54 @@
 
         <div class="account" id="account-template">
             <div class="account-id d-none"></div>
+            <div class="account-secret d-none"></div>
             <div class="account-name fs-4 fw-medium"></div>
             <div><i class="bi bi-person-circle"></i> <span class="account-username fs-6"></span></div>
             <div class="account-totp fs-1 fw-semibold text-primary"></div>
             <button class="btn btn-sm btn-secondary account-copy-totp">
                 <i class="bi bi-clipboard"></i>
             </button>
+            <button class="btn btn-sm btn-secondary account-qr-code">
+                <i class="bi bi-qr-code"></i>
+            </button>
             <div class="account-totp-expires"></div>
         </div>
 
-        <script src="./translate.js"></script>
-        
-        <script src="./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <div class="modal fade" id="qr-code-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><span text-id="6">QR code</span></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="qr-code" class="mb-3">
+                            <canvas></canvas>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="qr-totp-secret" placeholder=" ">
+                            <label for="qr-totp-secret"><span text-id="7">TOTP secret</span></label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="qr-issuer" placeholder=" ">
+                            <label for="qr-issuer"><span text-id="9">Service</span></label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="qr-username" placeholder=" ">
+                            <label for="qr-username"><span text-id="10">Username</span></label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="qr-otpauth-uri" placeholder=" ">
+                            <label for="qr-otpauth-uri"><span text-id="8">otpauth URI</span></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <script src="./translate.js"></script>
+        <script src="./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="./modules.bundle.js"></script>
         <script src="./script.js"></script>
     </body>
 </html>

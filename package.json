@@ -1,14 +1,15 @@
 {
   "name": "authenticator",
   "productName": "Authenticator",
-  "version": "1.0.0",
-  "description": "Authenticator",
+  "version": "1.1.0",
+  "description": "Unofficial TOTP generator compatible with Bitwarden",
   "main": "main.js",
   "scripts": {
     "start": "electron-forge start",
     "test": "echo \"Error: no test specified\" && exit 1",
     "package": "electron-forge package",
-    "make": "electron-forge make"
+    "make": "electron-forge make",
+    "build": "node build.js"
   },
   "repository": {
     "type": "git",
@@ -34,9 +35,11 @@
   "dependencies": {
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
+    "browserify": "^17.0.0",
     "command-exists": "^1.2.9",
     "electron-squirrel-startup": "^1.0.1",
     "fs-extra": "^11.2.0",
+    "qrcode": "^1.5.3",
     "totp-generator": "^1.0.0"
   }
 }

@@ -5,6 +5,11 @@ const textTranslations = [
     "Zaloguj się",
     "Sejf jest zablokowany",
     "Hasło",
+    "Kod QR",
+    "Sekret TOTP",
+    "URI otpauth",
+    "Usługa",
+    "Nazwa użytkownika",
 ];
 
 if (window.navigator.language.split("-")[0] == "pl") {
