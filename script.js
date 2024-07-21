@@ -156,6 +156,9 @@ document.querySelector("#password").addEventListener("keyup", (evt) => {
 
 window.electronAPI.onLockVault(() => {
     document.querySelector("#accounts").classList.add("d-none");
+    document.querySelector("#vault-is-locked").classList.add("d-none");
+    document.querySelector("#bw-cli-not-installed").classList.add("d-none");
+    document.querySelector("#not-logged-in").classList.add("d-none");
     document.querySelector("#loading-div").classList.remove("d-none");
     worker.postMessage({ message: "lockVault" });
 });
